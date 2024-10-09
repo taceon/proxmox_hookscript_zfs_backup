@@ -1,6 +1,6 @@
-# Proxmox hookscript to back ZFS
+# Proxmox Backup Server hookscript to backup ZFS
 
-I have Proxmox backup server running to backup all my VMs daily, but I also have a large ZFS dataset I would like to backup at the same time. So far proxmox (8.2) does not provice a fully integrated way to back ZFS datasets. Hence I have this hookscript setup, somehow integrate ZFS backup job (via script) with PBS's VM backup process.
+I have Proxmox Backup Server running to backup all my VMs daily, but I also have a large ZFS dataset I would like to backup at the same time. So far proxmox (8.2) does not provide a fully integrated way to backup ZFS datasets. Hence I have this hookscript setup, somehow integrate ZFS backup job (via ZFS snapshot in script `shared_folder_backup.sh`) with PBS's VM backup process by a hookscript (`vzdump-hook.sh`)
 
 ## Steps
 ```
