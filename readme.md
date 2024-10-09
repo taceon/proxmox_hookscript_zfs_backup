@@ -11,6 +11,25 @@ add the vzdump-hook.sh to one of your vm, mine is vm 201
 qm set 201 --hookscript local:snippets/vzdump-hook.sh
 ```
 
+to test, run
+`
+vzdump 201 --mode snapshot --compress lzo
+`. 
+This creates a backup of vm 201 on my local volumn.
+Or trigger a backup in proxmox ui.
+
+You should see something like these below in Tasks output
+
+```
+Backup completed for VM 201, executing custom script
+Starting ZFS backup job...
+Created snapshot: hdd/shared_folder@daily-20241009T145851
+Setting backup dataset to read-write...
+Sending incremental snapshot from hdd/shared_folder@daily-20241009T135404 to daily-20241009T145851
+Setting backup dataset back to read-only...
+ZFS backup job completed.
+```
+
 ## Explain
 
 `shared_folder_backup.sh` create snapshot of your primary server's ZFS dataset and send the snapshot to backup server for backup. It relies on ssh, so make sure create key based ssh access for automation.
