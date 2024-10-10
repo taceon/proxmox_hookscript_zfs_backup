@@ -1,5 +1,23 @@
 # Proxmox Backup Server hookscript to backup ZFS
 
+## **Update...**
+
+It seems the hookscript cannot survive a reboot, not sure why... For now I have to use cron to schedule the zfs backup, decoupled from VM backup.
+
+```
+crontab -e
+```
+add this line to the end, run the script every day at 2 am
+```
+0 2 * * * /var/lib/vz/snippets/shared_folder_backup.sh
+```
+
+Will come back to this later about hookscript
+
+Happy proxmoxing!
+
+## Introduction
+
 I have Proxmox Backup Server running to backup all my VMs daily, but I also have a large ZFS dataset I would like to backup at the same time. So far proxmox (8.2) does not provide a fully integrated way to backup ZFS datasets. Hence I have this hookscript setup, somehow integrate ZFS backup job (via ZFS snapshot in script `shared_folder_backup.sh`) with PBS's VM backup process by a hookscript (`vzdump-hook.sh`)
 
 ## Steps
