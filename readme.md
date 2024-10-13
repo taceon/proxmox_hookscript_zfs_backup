@@ -7,9 +7,10 @@ It seems the hookscript cannot survive a reboot, not sure why... For now I have 
 ```
 crontab -e
 ```
-add this line to the end, run the script every day at 2 am
+add this line to the end, run the zfs backup script every day at 2 am and rsync at 3 am
 ```
 0 2 * * * /var/lib/vz/snippets/shared_folder_backup.sh
+0 3 * * * /var/lib/vz/snippets/rsync_backup.sh
 ```
 
 Will come back to this later about hookscript
@@ -18,7 +19,15 @@ Happy proxmoxing!
 
 ## Introduction
 
-I have Proxmox Backup Server running to backup all my VMs daily, but I also have a large ZFS dataset I would like to backup at the same time. So far proxmox (8.2) does not provide a fully integrated way to backup ZFS datasets. Hence I have this hookscript setup, somehow integrate ZFS backup job (via ZFS snapshot in script `shared_folder_backup.sh`) with PBS's VM backup process by a hookscript (`vzdump-hook.sh`)
+I have Proxmox Backup Server running to backup all my VMs daily, 
+
+But I also have a large ZFS dataset and 
+a bunch of folders on normal ext4 partitions I would also like to backup at the same time...
+
+Those are written in `*_backup.sh`. 
+
+So far proxmox (8.2) does not provide a fully integrated way to backup ZFS datasets or any `rsync` folder backup.
+Hence I have this `vzdump-hook.sh` hookscript setup, somehow integrate those additional backup job with PBS' VM backup process.
 
 ## Steps
 ```
@@ -52,12 +61,8 @@ ZFS backup job completed.
 
 ## Explain
 
-`shared_folder_backup.sh` create snapshot of your primary server's ZFS dataset and send the snapshot to backup server for backup. It relies on ssh, so make sure create key based ssh access for automation.
-
-`vzdump-hook.sh` is a hook attached to a vm backup process, it calls the `shared_folder_backup.sh` when the backup process finishes.
-
-This way, whenevern the vm backup finishes, the script will also backup the ZFS dataset
-
+`vzdump-hook.sh` is a hookscript attached to VM backup process, 
+once the backup process of a certain vm enters a certain stage, `vzdump-hook.sh` will be called.
 
 Customize to your setup before deploy
 
